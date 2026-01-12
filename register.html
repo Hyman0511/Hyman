@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - WuShi Snacks</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Register page specific styles */
+        :root {
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode {
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .register-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        
+        .register-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .dark-mode .register-form {
+            background-color: #2a2a2a;
+        }
+        
+        .register-form h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .form-group input {
+            border-color: #444;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.1);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .checkbox-group a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-light);
+        }
+        
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .form-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .message.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .dark-mode .message.error {
+            background-color: #370000;
+        }
+        
+        .message.success {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .dark-mode .message.success {
+            background-color: #003300;
+        }
+        
+        @media (max-width: 768px) {
+            .register-container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            
+            .register-form {
+                padding: 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <header>
+            <nav class="container">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                        <h1 class="logo-text">WuShi Snacks</h1>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="products.html">Products</a>
+                    <a href="about.html">About Us</a>
+                    <a href="login.html">Login</a>
+                    <a href="https://hyman.rf.gd/" class="active">Register</a>
+                    <a href="admin.html">Admin</a>
+                    <a href="cart.html">Cart</a>
+                    <a href="forum.html">Forum</a>
+                    <a href="contact.html">Contact Us</a>
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2"></path>
+                            <path d="M12 20v2"></path>
+                            <path d="m4.93 4.93 1.41 1.41"></path>
+                            <path d="m17.66 17.66 1.41 1.41"></path>
+                            <path d="M2 12h2"></path>
+                            <path d="M20 12h2"></path>
+                            <path d="m6.34 17.66-1.41 1.41"></path>
+                            <path d="m19.07 4.93-1.41 1.41"></path>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <div class="container">
+                <div class="register-container">
+                    <form id="register-form" class="register-form">
+                        <h2>Create Account</h2>
+                        
+                        <!-- Error message container -->
+                        <div id="error-message" class="message error" style="display: none;"></div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name">First Name</label>
+                                <input type="text" id="first-name" name="firstName" required placeholder="Enter your first name">
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name</label>
+                                <input type="text" id="last-name" name="lastName" required placeholder="Enter your last name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number (Optional)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date-of-birth">Date of Birth (Optional)</label>
+                            <input type="date" id="date-of-birth" name="dateOfBirth" placeholder="Select your date of birth">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address (Optional)</label>
+                            <input type="text" id="address" name="address" placeholder="Enter your address">
+                        </div>
+                        
+                        <div class="form-group password-container">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required placeholder="Create a password" minlength="8">
+                            <span class="toggle-password" id="toggle-password">Show</span>
+                        </div>
+                        
+                        <div class="form-group password-container">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirmPassword" required placeholder="Confirm your password" minlength="8">
+                            <span class="toggle-password" id="toggle-confirm-password">Show</span>
+                        </div>
+
+                        
+                        <button type="submit" class="btn-primary"><a href="login.html">Create Account</a></button>
+                        
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="login.html">Sign in here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            
+            // Check theme preference in local storage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Theme toggle button click event
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    
+                    // Save theme preference to local storage
+                    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', currentTheme);
+                });
+            }
+            
+            // Password toggle functionality
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordField = document.getElementById('password');
+            const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+            const confirmPasswordField = document.getElementById('confirm-password');
+            
+            if (togglePassword && passwordField) {
+                togglePassword.addEventListener('click', () => {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+                });
+            }
+            
+            if (toggleConfirmPassword && confirmPasswordField) {
+                toggleConfirmPassword.addEventListener('click', () => {
+                    const type = confirmPasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPasswordField.setAttribute('type', type);
+                    toggleConfirmPassword.textContent = type === 'password' ? 'Show' : 'Hide';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

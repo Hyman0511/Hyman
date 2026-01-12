@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - WuShi Snacks</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Product page specific styles */
+        .products-header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--background-light);
+            margin-bottom: 40px;
+        }
+
+        .register-title {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: normal;
+        }
+        .products-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .products-header p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .category-tab {
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .category-tab:hover,
+        .category-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .products-section {
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+        .products-section h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .product-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .product-image-container:hover .product-image {
+            transform: scale(1.05);
+        }
+        .zoom-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .product-image-container:hover .zoom-icon {
+            opacity: 1;
+        }
+        /* Image preview modal */
+        .image-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .preview-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .close-preview {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-preview:hover {
+            color: #bbb;
+        }
+        .product-details {
+            padding: 20px;
+        }
+        .product-name {
+            margin: 0 0 12px;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+        .product-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .product-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .add-to-cart-btn:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .add-to-cart-btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        /* Cart link styles */
+        .cart-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            padding: 0 10px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        .info-label {
+            color: var(--text-light);
+        }
+        .info-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <button class="login-button" onclick="window.location.href='admin.html'">Admin Login</button>
+        
+        <header>
+            <nav class="container">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                        <h1 class="logo-text">WuShi Snacks</h1>
+                    </a>
+                </div>
+                <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html" class="active">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="login.html">Login</a>
+                <a href="https://hyman.rf.gd/">Register</a>
+                <a href="admin.html">Admin</a>
+                <a href="cart.html">Cart</a>
+                <a href="forum.html">Forum</a>
+                <a href="contact.html">Contact Us</a>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2"></path>
+                            <path d="M12 20v2"></path>
+                            <path d="m4.93 4.93 1.41 1.41"></path>
+                            <path d="m17.66 17.66 1.41 1.41"></path>
+                            <path d="M2 12h2"></path>
+                            <path d="M20 12h2"></path>
+                            <path d="m6.34 17.66-1.41 1.41"></path>
+                            <path d="m19.07 4.93-1.41 1.41"></path>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Products Header -->
+            <section class="products-header">
+                <div class="container">
+                    <h1>Our Products</h1>
+                    <p>Explore our full range of premium snacks and authentic sauces from around the world.</p>
+                </div>
+            </section>
+
+            <!-- Category Tabs -->
+            <div class="container">
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">All Products</button>
+                    <button class="category-tab" data-category="Snacks">Snacks</button>
+                    <button class="category-tab" data-category="Sauces">Sauces</button>
+                </div>
+
+                <!-- All Products Section -->
+                <section class="products-section">
+                    <h2>All Products</h2>
+                    <div class="products-grid" id="all-products-container">
+                        <!-- All products will be loaded here by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Snacks Section -->
+                <section class="products-section" id="snacks-section">
+                    <h2>Snacks</h2>
+                    <div class="products-grid" id="snacks-container">
+                        <!-- Snacks will be loaded here by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Sauces Section -->
+                <section class="products-section" id="sauces-section">
+                    <h2>Sauces</h2>
+                    <div class="products-grid" id="sauces-container">
+                        <!-- Sauces will be loaded here by JavaScript -->
+                    </div>
+                </section>
+                
+                <!-- Image preview modal -->
+                <div id="imagePreviewModal" class="image-preview-modal">
+                    <span class="close-preview">&times;</span>
+                    <img class="preview-content" id="previewImage">
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load products from JSON file
+        async function loadProducts() {
+            try {
+                const response = await fetch('data/products.json');
+                const products = await response.json();
+                
+                // Group products by category
+                const snacks = products.filter(product => product.category === 'Snacks');
+                const sauces = products.filter(product => product.category === 'Sauces');
+                
+                // Display products in respective containers
+                displayProducts(products, 'all-products-container');
+                displayProducts(snacks, 'snacks-container');
+                displayProducts(sauces, 'sauces-container');
+                
+                // Set up category tabs functionality
+                setupCategoryTabs();
+                // Set up image preview modal functionality
+                setupImagePreviewModal();
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        function displayProducts(products, containerId) {
+            const container = document.getElementById(containerId);
+            
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.dataset.productId = product.id;
+                card.style.cursor = 'pointer';
+                
+                // Create product card content with image container for preview functionality
+                card.innerHTML = `
+                    <div class="product-image-container" data-image="${product.image_url}">
+                        <img src="${product.image_url}" alt="${product.name}" class="product-image">
+                        <div class="zoom-icon">🔍</div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">
+                            $${product.price.toFixed(2)}
+                            ${product.discount > 0 ? `<span class="original-price">$${product.original_price.toFixed(2)}</span>` : ''}
+                            ${product.discount > 0 ? `<span class="discount-badge">${product.discount}% OFF</span>` : ''}
+                        </p>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-info">
+                            <div class="info-item">
+                                <span class="info-label">Origin:</span>
+                                <span class="info-value">${product.origin_country}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Spice:</span>
+                                <span class="info-value">${product.spice_level}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Supplier:</span>
+                                <span class="info-value">${product.supplier}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Stock:</span>
+                                <span class="info-value">${product.quantity}</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn" data-product-id="${product.id}">Add to Cart</button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+                
+                // Add click event to card for navigating to product detail page
+                card.addEventListener('click', () => {
+                    window.location.href = `product-detail.html?id=${product.id}`;
+                });
+            });
+            
+            // Add image preview event listeners to all product images
+            document.querySelectorAll('.product-image-container').forEach(container => {
+                container.addEventListener('click', handleImageClick);
+            });
+            
+            // Add event listeners to add to cart buttons
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // Prevent event from bubbling up to the product card
+                    event.stopPropagation();
+                    const productId = button.getAttribute('data-product-id');
+                    handleAddToCart(productId);
+                });
+            });
+            
+            // Update add to cart buttons based on login status
+            updateAddToCartButtons();
+        }
+
+        // Handle image click for preview
+        function handleImageClick(event) {
+            const imageUrl = event.currentTarget.dataset.image;
+            const modal = document.getElementById('imagePreviewModal');
+            const previewImage = document.getElementById('previewImage');
+            
+            previewImage.src = imageUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Set up category tabs functionality
+        function setupCategoryTabs() {
+            const tabs = document.querySelectorAll('.category-tab');
+            const sections = {
+                'all': document.querySelector('.products-section'),
+                'Snacks': document.getElementById('snacks-section'),
+                'Sauces': document.getElementById('sauces-section')
+            };
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Show/hide sections based on selected category
+                    const category = tab.getAttribute('data-category');
+                    
+                    // Hide all sections
+                    Object.values(sections).forEach(section => section.style.display = 'none');
+                    
+                    // Show selected section
+                    if (category === 'all') {
+                        document.querySelector('.products-section').style.display = 'block';
+                    } else {
+                        sections[category].style.display = 'block';
+                    }
+                });
+            });
+            
+            // Initially hide snacks and sauces sections
+            sections['Snacks'].style.display = 'none';
+            sections['Sauces'].style.display = 'none';
+        }
+        
+        // Set up image preview modal functionality
+        function setupImagePreviewModal() {
+            const modal = document.getElementById('imagePreviewModal');
+            const closeBtn = document.getElementsByClassName('close-preview')[0];
+            
+            // Close button click event
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore background scrolling
+            });
+            
+            // Click outside modal to close
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // ESC key to close modal
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // 添加到购物车按钮处理器
+        function handleAddToCart(productId) {
+            console.log('handleAddToCart called with productId:', productId);
+            
+            // 获取用户ID，如果已登录，否则使用'guest'
+            let userId = 'guest';
+            if (window.auth && window.auth.isLoggedIn && window.auth.isLoggedIn()) {
+                const currentUser = window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+                if (currentUser && currentUser.id) {
+                    userId = currentUser.id;
+                    console.log('User authenticated:', userId);
+                }
+            } else {
+                console.log('Guest user adding product');
+            }
+            
+            // 查找产品元素以获取产品详情
+            const productElement = document.querySelector(`[data-product-id="${productId}"]`);
+            if (!productElement) {
+                console.error('Product element not found for ID:', productId);
+                showNotification('Error: Product not found', 'error');
+                return;
+            }
+            
+            // 提取产品详情，确保数据格式正确
+            const productNameElement = productElement.querySelector('.product-name');
+            const productPriceElement = productElement.querySelector('.product-price');
+            const originalPriceElement = productElement.querySelector('.original-price');
+            const discountBadgeElement = productElement.querySelector('.discount-badge');
+            const productImageElement = productElement.querySelector('.product-image');
+            
+            // 获取产品名称
+            const name = productNameElement ? productNameElement.textContent.trim() : 'Unknown Product';
+            
+            // 获取产品价格（移除$符号和其他非数字字符）
+            let price = 0;
+            if (productPriceElement) {
+                // 获取价格文本但不包括折扣标签部分
+                const priceText = productPriceElement.firstChild.textContent.trim();
+                price = parseFloat(priceText.replace(/[^0-9.-]/g, '')) || 0;
+            }
+            
+            // 获取原价（如果有）
+            let original_price = price; // 默认使用价格作为原价
+            if (originalPriceElement) {
+                original_price = parseFloat(originalPriceElement.textContent.replace(/[^0-9.-]/g, '')) || price;
+            }
+            
+            // 获取折扣（如果有）
+            let discount = 0;
+            if (discountBadgeElement) {
+                discount = parseInt(discountBadgeElement.textContent.replace(/[^0-9]/g, '')) || 0;
+            }
+            
+            // 获取图片URL
+            const image_url = productImageElement ? productImageElement.src : '';
+            
+            // 创建产品对象
+            const product = {
+                id: String(productId), // 确保ID是字符串类型
+                name: name,
+                price: price,
+                original_price: original_price,
+                discount: discount,
+                image_url: image_url
+            };
+            
+            console.log('提取的产品数据:', product);
+            
+            // 使用cart.js模块添加到购物车
+            if (window.cart && typeof window.cart.addToCart === 'function') {
+                console.log('Using cart.js module');
+                window.cart.addToCart(product, 1, userId)
+                    .then(result => {
+                        if (!result.success) {
+                            console.error('Failed to add to cart:', result.message);
+                            showNotification(result.message || 'Failed to add item to cart', 'error');
+                        } else {
+                            console.log('Successfully added to cart:', result);
+                            showNotification('Product added to cart successfully!', 'success');
+                            
+                            // 更新购物车数量显示
+                            updateCartCount();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding to cart:', error);
+                        showNotification('Failed to add item to cart', 'error');
+                    });
+            } else {
+                console.error('Cart.js module not available');
+                showNotification('Shopping cart functionality not available', 'error');
+            }
+        }
+        
+        // 显示通知消息
+        function showNotification(message, type = 'info') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 4px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            // 设置背景色
+            switch(type) {
+                case 'success':
+                    notification.style.backgroundColor = '#4caf50';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = '#f44336';
+                    break;
+                case 'info':
+                    notification.style.backgroundColor = '#2196f3';
+                    break;
+                default:
+                    notification.style.backgroundColor = '#ff9800';
+            }
+
+            // 添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // 添加到页面
+            document.body.appendChild(notification);
+
+            // 3秒后移除
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.3s, transform 0.3s';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                    if (document.head.contains(style)) {
+                        document.head.removeChild(style);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        // 更新购物车数量显示
+        function updateCartCount() {
+            if (window.cart && typeof window.cart.getCartItemCount === 'function') {
+                const itemCount = window.cart.getCartItemCount();
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = itemCount;
+                    // 如果购物车为空，隐藏数量标记
+                    cartCountElement.style.display = itemCount > 0 ? 'flex' : 'none';
+                }
+            }
+        }
+        
+        // Update add to cart buttons - now enabled for all users
+        function updateAddToCartButtons() {
+            console.log('Updating add to cart buttons. All buttons enabled for all users.');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            
+            addToCartButtons.forEach(button => {
+                button.disabled = false; // Always enable buttons
+                button.title = 'Add to Cart'; // Update title
+                // 添加日志以便调试
+                console.log('Button state updated:', { disabled: button.disabled, title: button.title });
+            });
+        }
+        
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing products page');
+            loadProducts();
+            
+            // 更新购物车数量显示
+            updateCartCount();
+            
+            // 立即检查登录状态并更新按钮
+            updateAddToCartButtons();
+        });
+        
+        // 监听认证状态变化
+        window.addEventListener('authChanged', (event) => {
+            console.log('Auth changed event received:', event.detail);
+            updateAddToCartButtons();
+            // 认证状态改变时重新更新购物车数量
+            updateCartCount();
+        });
+        
+        // 当从购物车页面返回时，更新购物车数量
+        window.addEventListener('pageshow', () => {
+            updateCartCount();
+        });
+    </script>
+<!-- 调整脚本加载顺序，确保auth.js先加载 -->
+    <script src="auth.js"></script>
+    <script>
+        // 确认auth模块已加载
+        console.log('Auth module loaded:', !!window.auth);
+    </script>
+    <script src="utils.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        // 确认cart模块已加载
+        console.log('Cart module loaded:', !!window.cart);
+    </script>
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            
+            // Check theme preference in local storage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Theme toggle button click event
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    
+                    // Save theme preference to local storage
+                    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', currentTheme);
+                });
+            }
+        });
+    </script>
+    </body>
+</html>

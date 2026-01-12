@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Lunch Restaurant</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Cart link styles */
+        .cart-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: var(--transition);
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .cart-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 111, 165, 0.3);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+        
+        .cart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .cart-header h1 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .cart-empty h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .cart-empty a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ff6b35;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .cart-empty a:hover {
+            background-color: #e55a28;
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 20px;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .cart-item-price {
+            color: #ff6b35;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .cart-item-original-price {
+            color: #999;
+            font-size: 14px;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background-color: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: background-color 0.3s;
+        }
+        
+        .quantity-btn:hover {
+            background-color: #e5e5e5;
+        }
+        
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            padding: 5px;
+            font-size: 14px;
+        }
+        
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .remove-btn:hover {
+            color: #ff6b35;
+        }
+        
+        .cart-summary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .summary-label {
+            color: #666;
+        }
+        
+        .summary-value {
+            font-weight: 500;
+        }
+        
+        .summary-total {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff6b35;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+        
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .continue-shopping {
+            padding: 12px 30px;
+            background-color: #f5f5f5;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .continue-shopping:hover {
+            background-color: #e5e5e5;
+        }
+        
+        .checkout-btn {
+            padding: 12px 40px;
+            background-color: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #e55a28;
+        }
+        
+        .checkout-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .empty-cart-btn {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .empty-cart-btn:hover {
+            background-color: #e5e5e5;
+            color: #333;
+        }
+        
+        /* Checkout Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover, .close:focus {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            background-color: #f1f1f1;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .form-section h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* Payment Details */
+        .payment-details {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        /* Order Summary */
+        #order-summary-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .order-summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+            font-size: 18px;
+        }
+        
+        /* Button Styles */
+        .cancel-btn {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            color: #666;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #e5e5e5;
+            color: #333;
+        }
+        
+        .confirm-checkout-btn {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .confirm-checkout-btn:hover {
+            background-color: #3a5785;
+        }
+        
+        .confirm-checkout-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+
+        .register-title {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: normal;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item-image {
+                margin-bottom: 15px;
+            }
+            
+            .cart-item-actions {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+            
+            .cart-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .continue-shopping,
+            .checkout-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                <h1 class="logo-text">WuShi Snacks</h1>
+            </a>
+        </div>
+        <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="login.html">Login</a>
+                <a href="https://hyman.rf.gd/">Register</a>
+                <a href="admin.html">Admin</a>
+                <a href="cart.html" class="active">Cart</a>
+                <a href="forum.html">Forum</a>
+                <a href="contact.html">Contact Us</a>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+            </button>
+        </div>
+    </nav>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1>Cart</h1>
+            <button id="empty-cart-btn" class="empty-cart-btn" style="display: none;">Empty Cart</button>
+        </div>
+
+        <!-- Empty cart message -->
+        <div id="cart-empty" class="cart-empty">
+            <h2>Your cart is empty</h2>
+            <p>Browse our menu and start your culinary journey!</p>
+            <a href="products.html">View Menu</a>
+        </div>
+        
+        <!-- Checkout Modal -->
+        <div id="checkout-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Checkout</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="checkout-form">
+                        <!-- Customer Information -->
+                        <div class="form-section">
+                            <h3>Customer Information</h3>
+                            <div class="form-group">
+                                <label for="full-name">Full Name:</label>
+                                <input type="text" id="full-name" name="full-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number:</label>
+                                <input type="tel" id="phone" name="phone" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Shipping Address -->
+                        <div class="form-section">
+                            <h3>Shipping Address</h3>
+                            <div class="form-group">
+                                <label for="address">Address:</label>
+                                <textarea id="address" name="address" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City:</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postal-code">Postal Code:</label>
+                                <input type="text" id="postal-code" name="postal-code" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country:</label>
+                                <input type="text" id="country" name="country" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Information -->
+                        <div class="form-section">
+                            <h3>Payment Information</h3>
+                            <div class="form-group">
+                                <label for="payment-method">Payment Method:</label>
+                                <select id="payment-method" name="payment-method" required>
+                                    <option value="credit-card">Credit Card</option>
+                                    <option value="paypal">PayPal</option>
+                                    <option value="cash-on-delivery">Cash on Delivery</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Credit Card Details (only shown if credit card is selected) -->
+                            <div id="credit-card-details" class="payment-details">
+                                <div class="form-group">
+                                    <label for="card-number">Card Number:</label>
+                                    <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiry-date">Expiry Date:</label>
+                                    <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV:</label>
+                                    <input type="text" id="cvv" name="cvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Summary -->
+                        <div class="form-section">
+                            <h3>Order Summary</h3>
+                            <div id="order-summary-details">
+                                <!-- Order summary will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" form="checkout-form" class="confirm-checkout-btn">Place Order</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 购物车商品列表 -->
+        <div id="cart-items" class="cart-items" style="display: none;">
+            <!-- 购物车商品将通过JavaScript动态添加 -->
+        </div>
+
+        <!-- Cart summary -->
+        <div id="cart-summary" class="cart-summary" style="display: none;">
+            <div class="summary-row">
+                <span class="summary-label">Total Items:</span>
+                <span id="total-items" class="summary-value">0</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span id="total-price" class="summary-value">¥0.00</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Total:</span>
+                <span id="final-price">¥0.00</span>
+            </div>
+        </div>
+
+        <!-- Cart actions -->
+        <div id="cart-actions" class="cart-actions" style="display: none;">
+            <a href="products.html" class="continue-shopping">Continue Shopping</a>
+            <button id="checkout-btn" class="checkout-btn">Checkout</button>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', async function() {
+            await updateCartDisplay();
+            await cart.updateCartCount();
+            auth.updateNavigation();
+            setupEventListeners();
+        });
+
+        // 显示结账模态框
+        async function showCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            const checkoutForm = document.getElementById('checkout-form');
+            const paymentMethodSelect = document.getElementById('payment-method');
+            const creditCardDetails = document.getElementById('credit-card-details');
+            
+            // 显示模态框
+            modal.style.display = 'block';
+            
+            // 填充订单摘要
+            await populateOrderSummary();
+            
+            // 根据当前选择的支付方式显示/隐藏信用卡详情
+            if (paymentMethodSelect.value === 'credit-card') {
+                creditCardDetails.style.display = 'block';
+            } else {
+                creditCardDetails.style.display = 'none';
+            }
+            
+            // 加载当前登录用户的信息（如果有）
+            loadUserInfo();
+        }
+        
+        // 关闭结账模态框
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.style.display = 'none';
+        }
+        
+        // 根据支付方式显示/隐藏信用卡详情
+        function togglePaymentDetails() {
+            const paymentMethodSelect = document.getElementById('payment-method');
+            const creditCardDetails = document.getElementById('credit-card-details');
+            
+            if (paymentMethodSelect.value === 'credit-card') {
+                creditCardDetails.style.display = 'block';
+            } else {
+                creditCardDetails.style.display = 'none';
+            }
+        }
+        
+        // 填充订单摘要
+        async function populateOrderSummary() {
+            const orderSummaryDetails = document.getElementById('order-summary-details');
+            const cartItems = await cart.getCart();
+            const totalPrice = await cart.calculateCartTotal();
+            
+            if (cartItems.length === 0) {
+                orderSummaryDetails.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            // 添加每个商品
+            cartItems.forEach(item => {
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                html += `
+                    <div class="order-item">
+                        <span>${item.name} (x${item.quantity})</span>
+                        <span>¥${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            // 添加总计
+            html += `
+                <div class="order-summary-total">
+                    <span>Total:</span>
+                    <span>¥${totalPrice.toFixed(2)}</span>
+                </div>
+            `;
+            
+            orderSummaryDetails.innerHTML = html;
+        }
+        
+        // 加载当前登录用户的信息
+        function loadUserInfo() {
+            // 检查是否有当前登录用户
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                
+                // 填充用户信息到表单
+                document.getElementById('full-name').value = user.full_name || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('address').value = user.address || '';
+                
+                // 如果有收货地址信息，也可以填充
+                const shippingAddress = localStorage.getItem('shippingAddress');
+                if (shippingAddress) {
+                    const address = JSON.parse(shippingAddress);
+                    document.getElementById('city').value = address.city || '';
+                    document.getElementById('postal-code').value = address.postal_code || '';
+                    document.getElementById('country').value = address.country || '';
+                }
+            }
+        }
+        
+        // 保存收货地址到localStorage
+        function saveShippingAddress() {
+            const address = {
+                city: document.getElementById('city').value,
+                postal_code: document.getElementById('postal-code').value,
+                country: document.getElementById('country').value
+            };
+            localStorage.setItem('shippingAddress', JSON.stringify(address));
+        }
+        
+        // 处理结账表单提交
+        async function handleCheckoutSubmit(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const formData = new FormData(event.target);
+            const orderData = {
+                customerInfo: {
+                    fullName: formData.get('full-name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone')
+                },
+                shippingAddress: {
+                    address: formData.get('address'),
+                    city: formData.get('city'),
+                    postalCode: formData.get('postal-code'),
+                    country: formData.get('country')
+                },
+                paymentInfo: {
+                    method: formData.get('payment-method')
+                },
+                orderDate: new Date().toISOString()
+            };
+            
+            // 如果是信用卡支付，添加信用卡信息
+            if (orderData.paymentInfo.method === 'credit-card') {
+                orderData.paymentInfo.creditCard = {
+                    cardNumber: formData.get('card-number'),
+                    expiryDate: formData.get('expiry-date'),
+                    cvv: formData.get('cvv')
+                };
+            }
+            
+            try {
+                // 保存订单到localStorage（实际项目中应该发送到服务器）
+                const orderId = saveOrderToLocalStorage(orderData);
+                
+                // 清空购物车
+                await cart.clearCart();
+                
+                // 更新购物车显示
+                await updateCartDisplay();
+                await cart.updateCartCount();
+                
+                // 关闭模态框
+                closeCheckoutModal();
+                
+                // 显示订单成功信息
+                showNotification(`Order placed successfully! Your order ID is: ${orderId}`, 'success');
+                
+            } catch (error) {
+                console.error('Error processing checkout:', error);
+                showNotification('Failed to process checkout. Please try again.', 'error');
+            }
+        }
+        
+        // 保存订单到localStorage
+        function saveOrderToLocalStorage(orderData) {
+            // 获取现有订单或创建新数组
+            const ordersData = localStorage.getItem('orders');
+            const orders = ordersData ? JSON.parse(ordersData) : [];
+            
+            // 生成订单ID
+            const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            
+            // 添加上下文信息
+            const orderWithDetails = {
+                id: orderId,
+                ...orderData,
+                status: 'pending',
+                totalAmount: cart.calculateCartTotal()
+            };
+            
+            // 保存订单
+            orders.push(orderWithDetails);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            return orderId;
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // Empty cart button
+            document.getElementById('empty-cart-btn').addEventListener('click', async function() {
+                if (confirm('Are you sure you want to empty your cart?')) {
+                    try {
+                        const result = await cart.clearCart();
+                        if (result.success) {
+                            await updateCartDisplay();
+                            await cart.updateCartCount();
+                            showNotification('Cart has been emptied', 'success');
+                        } else {
+                            showNotification(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error emptying cart:', error);
+                        showNotification('Failed to empty cart', 'error');
+                    }
+                }
+            });
+
+            // Checkout button
+            document.getElementById('checkout-btn').addEventListener('click', function() {
+                showCheckoutModal();
+            });
+            
+            // Checkout form submit
+            document.getElementById('checkout-form').addEventListener('submit', handleCheckoutSubmit);
+            
+            // Payment method change
+            document.getElementById('payment-method').addEventListener('change', togglePaymentDetails);
+            
+            // Modal close button
+            document.querySelector('.modal .close').addEventListener('click', closeCheckoutModal);
+            
+            // Cancel button in modal
+            document.querySelector('.modal .cancel-btn').addEventListener('click', closeCheckoutModal);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('checkout-modal');
+                if (event.target === modal) {
+                    closeCheckoutModal();
+                }
+            });
+
+            // Logout button (if exists)
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    auth.logoutUser();
+                    window.location.reload();
+                });
+            }
+
+            // Theme toggle button
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-mode');
+                    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+                });
+            }
+
+            // Initialize theme
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        // 更新购物车显示
+        async function updateCartDisplay() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartEmpty = document.getElementById('cart-empty');
+            const cartSummary = document.getElementById('cart-summary');
+            const cartActions = document.getElementById('cart-actions');
+            const emptyCartBtn = document.getElementById('empty-cart-btn');
+            const totalItemsElement = document.getElementById('total-items');
+            const totalPriceElement = document.getElementById('total-price');
+            const finalPriceElement = document.getElementById('final-price');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            // 显示加载状态
+            cartItemsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading...</div>';
+
+            try {
+                const cartItems = await cart.getCart();
+
+                // 清空当前购物车项
+                cartItemsContainer.innerHTML = '';
+
+                if (cartItems.length === 0) {
+                    // 显示空购物车
+                    cartEmpty.style.display = 'block';
+                    cartItemsContainer.style.display = 'none';
+                    cartSummary.style.display = 'none';
+                    cartActions.style.display = 'none';
+                    emptyCartBtn.style.display = 'none';
+                    checkoutBtn.disabled = true;
+                } else {
+                    // 显示购物车内容
+                    cartEmpty.style.display = 'none';
+                    cartItemsContainer.style.display = 'block';
+                    cartSummary.style.display = 'block';
+                    cartActions.style.display = 'block';
+                    emptyCartBtn.style.display = 'block';
+                    checkoutBtn.disabled = false;
+
+                    // 添加购物车项
+                    cartItems.forEach(item => {
+                        const cartItem = createCartItemElement(item);
+                        cartItemsContainer.appendChild(cartItem);
+                    });
+
+                    // 更新汇总信息
+                    const itemCount = await cart.getCartItemCount();
+                    const totalPrice = await cart.calculateCartTotal();
+
+                    totalItemsElement.textContent = itemCount;
+                    totalPriceElement.textContent = `¥${totalPrice.toFixed(2)}`;
+                    finalPriceElement.textContent = `¥${totalPrice.toFixed(2)}`;
+                }
+            } catch (error) {
+                console.error('Error updating cart display:', error);
+                cartItemsContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Failed to load cart items</div>';
+            }
+        }
+
+        // 创建购物车项元素
+        function createCartItemElement(item) {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.dataset.id = item.id;
+
+            // 计算折扣价
+            const hasDiscount = item.discount > 0;
+            const displayPrice = hasDiscount ? (item.price * (1 - item.discount / 100)) : item.price;
+
+            cartItem.innerHTML = `
+                <img src="${item.image_url || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <h3 class="cart-item-name">${item.name}</h3>
+                    <span class="cart-item-price">¥${displayPrice.toFixed(2)}</span>
+                    ${hasDiscount ? `<span class="cart-item-original-price">¥${item.original_price.toFixed(2)}</span>` : ''}
+                </div>
+                <div class="cart-item-actions">
+                    <div class="quantity-control">
+                        <button class="quantity-btn decrease-btn">-</button>
+                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                        <button class="quantity-btn increase-btn">+</button>
+                    </div>
+                    <button class="remove-btn">Delete</button>
+                </div>
+            `;
+
+            // 添加数量减少按钮事件
+            cartItem.querySelector('.decrease-btn').addEventListener('click', function() {
+                let quantity = parseInt(cartItem.querySelector('.quantity-input').value, 10);
+                if (quantity > 1) {
+                    quantity--;
+                    updateItemQuantity(item.id, quantity);
+                }
+            });
+
+            // 添加数量增加按钮事件
+            cartItem.querySelector('.increase-btn').addEventListener('click', function() {
+                let quantity = parseInt(cartItem.querySelector('.quantity-input').value, 10);
+                quantity++;
+                updateItemQuantity(item.id, quantity);
+            });
+
+            // 添加删除按钮事件
+            cartItem.querySelector('.remove-btn').addEventListener('click', async function() {
+                try {
+                    const result = await cart.removeFromCart(item.id);
+                    if (result.success) {
+                        await updateCartDisplay();
+                        await cart.updateCartCount();
+                        showNotification('Item has been removed from cart', 'success');
+                    } else {
+                        showNotification(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error removing item:', error);
+                    showNotification('Failed to remove item', 'error');
+                }
+            });
+
+            return cartItem;
+        }
+
+        // 更新商品数量
+        async function updateItemQuantity(productId, quantity) {
+            try {
+                const result = await cart.updateCartItemQuantity(productId, quantity);
+                if (result.success) {
+                    await updateCartDisplay();
+                    await cart.updateCartCount();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating item quantity:', error);
+                showNotification('Failed to update item quantity', 'error');
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 4px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            // 设置背景色
+            switch(type) {
+                case 'success':
+                    notification.style.backgroundColor = '#4caf50';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = '#f44336';
+                    break;
+                case 'info':
+                    notification.style.backgroundColor = '#2196f3';
+                    break;
+                default:
+                    notification.style.backgroundColor = '#ff9800';
+            }
+
+            // 添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // 添加到页面
+            document.body.appendChild(notification);
+
+            // 3秒后移除
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.3s, transform 0.3s';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                    document.head.removeChild(style);
+                }, 300);
+            }, 3000);
+        }
+
+        // 更新购物车数量显示
+        function updateCartCount() {
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                const count = cart.getCartItemCount();
+                cartCountElement.textContent = count;
+            }
+        }
+
+    </script>
+    <footer>
+        <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+    </footer>
+</body>
+</html>

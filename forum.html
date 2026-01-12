@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - Lunch Restaurant</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <style>
+        /* Forum page specific styles */
+        .forum-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .forum-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .forum-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .forum-header p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .comments-section {
+            background-color: var(--background-light);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comments-section h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .comment-item {
+            background-color: var(--background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .comment-date {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+        
+        .comment-content {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .comment-likes {
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .comment-likes button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+        
+        .comment-likes button:hover {
+            color: var(--primary-color);
+        }
+        
+        .add-comment-section {
+            background-color: var(--background-light);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .add-comment-section h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--background);
+            color: var(--text-color);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2);
+        }
+        
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: flex-start;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .submit-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+
+        .register-title {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: normal;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .forum-container {
+                padding: 20px 15px;
+            }
+            
+            .comments-section,
+            .add-comment-section {
+                padding: 20px;
+            }
+            
+            .comment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                    <h1 class="logo-text">WuShi Snacks</h1>
+                </a>
+            </div>
+
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="login.html">Login</a>
+                <a href="https://hyman.rf.gd/">Register</a>
+                <a href="admin.html">Admin</a>
+                <a href="cart.html">Cart</a>
+                <a href="forum.html" class="active">Forum</a>
+                <a href="contact.html">Contact Us</a>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="forum-container">
+            <div class="forum-header">
+                <h1>Customer Forum</h1>
+                <p>Share your thoughts, experiences, and feedback about our restaurant</p>
+            </div>
+
+            <!-- Comments Section -->
+            <section class="comments-section">
+                <h2>Comments</h2>
+                <ul id="comment-list" class="comment-list">
+                    <!-- Comments will be dynamically loaded here -->
+                </ul>
+            </section>
+
+            <!-- Add Comment Section -->
+            <section class="add-comment-section">
+                <h2>Add a Comment</h2>
+                <form id="comment-form" class="comment-form">
+                    <div class="form-group">
+                        <label for="comment-name">Name</label>
+                        <input type="text" id="comment-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-email">Email</label>
+                        <input type="email" id="comment-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-text">Your Comment</label>
+                        <textarea id="comment-text" name="text" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Post Comment</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Setup event listeners and initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const moonIcon = document.querySelector('.moon-icon');
+            const sunIcon = document.querySelector('.sun-icon');
+            
+            // Check theme preference in local storage
+            const savedTheme = localStorage.getItem('theme');
+            
+            // Apply saved theme preference if available
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            } else if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            } else {
+                // By default, check system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.classList.add('dark-mode');
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                }
+            }
+            
+            // Theme toggle button click event
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = document.body.classList.toggle('dark-mode');
+                
+                if (isDarkMode) {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Update navigation with user info
+            if (typeof auth !== 'undefined') {
+                auth.updateNavigation();
+            }
+            
+            // Initialize forum functionality
+            initForum();
+        });
+        
+        // Update cart count display
+        function updateCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                cartCountElement.textContent = totalItems;
+                cartCountElement.style.display = totalItems > 0 ? 'block' : 'none';
+            }
+        }
+        
+        // Generate sample comments
+        function generateSampleComments() {
+            const comments = [
+                { name: "John Doe", email: "john@example.com", content: "The food here is amazing! I especially love the dumplings.", date: "2024-01-15", likes: 5 },
+                { name: "Jane Smith", email: "jane@example.com", content: "Great service and delicious food. The ambiance is perfect for a family dinner.", date: "2024-01-16", likes: 3 },
+                { name: "Mike Johnson", email: "mike@example.com", content: "I've been coming here for years and the quality never disappoints.", date: "2024-01-17", likes: 8 },
+                { name: "Sarah Brown", email: "sarah@example.com", content: "The new menu items are fantastic! Definitely worth trying.", date: "2024-01-18", likes: 6 },
+                { name: "Tom Wilson", email: "tom@example.com", content: "Fast delivery and the food arrived hot. Perfect for a quick lunch at work.", date: "2024-01-19", likes: 4 },
+                { name: "Lisa Davis", email: "lisa@example.com", content: "The vegetarian options are surprisingly good. I'll be back!", date: "2024-01-20", likes: 7 },
+                { name: "David Lee", email: "david@example.com", content: "Great value for money. The portions are generous and the taste is authentic.", date: "2024-01-21", likes: 9 },
+                { name: "Emily Clark", email: "emily@example.com", content: "The staff is very friendly and accommodating. Highly recommended!", date: "2024-01-22", likes: 5 },
+                { name: "James Rodriguez", email: "james@example.com", content: "Best Chinese restaurant in the area. The noodles are to die for.", date: "2024-01-23", likes: 12 },
+                { name: "Maria Garcia", email: "maria@example.com", content: "Clean environment and excellent hygiene standards.", date: "2024-01-24", likes: 6 },
+                { name: "Robert Martinez", email: "robert@example.com", content: "Perfect for special occasions. We celebrated our anniversary here and had a wonderful time.", date: "2024-01-25", likes: 10 },
+                { name: "Jennifer Lopez", email: "jennifer@example.com", content: "The spicy dishes are really flavorful without being too overpowering.", date: "2024-01-26", likes: 7 },
+                { name: "Michael Taylor", email: "michael@example.com", content: "Great selection of drinks to pair with the food.", date: "2024-01-27", likes: 4 },
+                { name: "Jessica Hernandez", email: "jessica@example.com", content: "I love that they use fresh ingredients. You can taste the difference.", date: "2024-01-28", likes: 8 },
+                { name: "William Gonzalez", email: "william@example.com", content: "The dim sum is absolutely delicious. A must-try!", date: "2024-01-29", likes: 11 },
+                { name: "Patricia Wright", email: "patricia@example.com", content: "Quick and efficient service even during peak hours.", date: "2024-01-30", likes: 5 },
+                { name: "Richard Lopez", email: "richard@example.com", content: "The prices are reasonable for the quality you get.", date: "2024-01-31", likes: 6 },
+                { name: "Susan Wilson", email: "susan@example.com", content: "We had a large group and they were able to accommodate us easily.", date: "2024-02-01", likes: 7 },
+                { name: "Joseph Miller", email: "joseph@example.com", content: "The dessert menu is amazing! Don't leave without trying the mango pudding.", date: "2024-02-02", likes: 9 },
+                { name: "Angela Davis", email: "angela@example.com", content: "Overall a great dining experience. I'll definitely recommend to friends.", date: "2024-02-03", likes: 8 }
+            ];
+            return comments;
+        }
+        
+        // Initialize forum functionality
+        function initForum() {
+            // Load comments from local storage or generate sample comments
+            let comments = JSON.parse(localStorage.getItem('forumComments'));
+            if (!comments || comments.length === 0) {
+                comments = generateSampleComments();
+                localStorage.setItem('forumComments', JSON.stringify(comments));
+            }
+            
+            // Display comments
+            displayComments(comments);
+            
+            // Add comment form submission
+            const commentForm = document.getElementById('comment-form');
+            commentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                addComment();
+            });
+        }
+        
+        // Display comments
+        function displayComments(comments) {
+            const commentList = document.getElementById('comment-list');
+            commentList.innerHTML = '';
+            
+            comments.forEach(comment => {
+                const commentItem = document.createElement('li');
+                commentItem.className = 'comment-item';
+                
+                // Get first letter for avatar
+                const firstLetter = comment.name.charAt(0).toUpperCase();
+                
+                commentItem.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            <div class="comment-avatar">${firstLetter}</div>
+                            ${comment.name}
+                        </div>
+                        <div class="comment-date">${comment.date}</div>
+                    </div>
+                    <div class="comment-content">${comment.content}</div>
+                    <div class="comment-likes">
+                        <button onclick="likeComment('${comment.email}')">❤</button>
+                        <span>${comment.likes}</span>
+                    </div>
+                `;
+                
+                commentList.appendChild(commentItem);
+            });
+        }
+        
+        // Add a new comment
+        function addComment() {
+            const name = document.getElementById('comment-name').value;
+            const email = document.getElementById('comment-email').value;
+            const content = document.getElementById('comment-text').value;
+            
+            // Create new comment
+            const newComment = {
+                name: name,
+                email: email,
+                content: content,
+                date: new Date().toISOString().split('T')[0],
+                likes: 0
+            };
+            
+            // Get existing comments
+            const comments = JSON.parse(localStorage.getItem('forumComments'));
+            
+            // Add new comment at the beginning
+            comments.unshift(newComment);
+            
+            // Save to local storage
+            localStorage.setItem('forumComments', JSON.stringify(comments));
+            
+            // Display updated comments
+            displayComments(comments);
+            
+            // Reset form
+            document.getElementById('comment-form').reset();
+        }
+        
+        // Like a comment
+        function likeComment(email) {
+            // Get existing comments
+            const comments = JSON.parse(localStorage.getItem('forumComments'));
+            
+            // Find and update the comment
+            const updatedComments = comments.map(comment => {
+                if (comment.email === email) {
+                    return { ...comment, likes: comment.likes + 1 };
+                }
+                return comment;
+            });
+            
+            // Save to local storage
+            localStorage.setItem('forumComments', JSON.stringify(updatedComments));
+            
+            // Display updated comments
+            displayComments(updatedComments);
+        }
+    </script>
+</body>
+</html>

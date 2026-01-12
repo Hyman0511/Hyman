@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WuShi Admin - Product Management</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+
+        .register-title {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <button class="logout-button" id="logout-btn" style="display: none;">Logout</button>
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+        </button>
+        
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                        <h1 class="logo-text">WuShi Snacks</h1>
+                    </a>
+                </div>
+                <nav>
+                    <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="login.html">Login</a>
+                <a href="https://hyman.rf.gd/">Register</a>
+                <a href="admin.html" class="active">Admin</a>
+                <a href="cart.html">Cart</a>
+                <a href="forum.html">Forum</a>
+                <a href="contact.html">Contact Us</a>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+                </button>
+            </div>
+                </nav>
+                <p>Manage your product catalog</p>
+            </header>
+
+            <!-- Login Section -->
+            <div class="login-section" id="login-section">
+                <h2>Login to Admin Area</h2>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <button id="login-btn">Login</button>
+                <p class="login-link">Don't have an account? <span id="show-register">Register here</span></p>
+                <p class="error-message" id="login-error"></p>
+            </div>
+            
+            <!-- Register Section -->
+            <div class="register-section" id="register-section" style="display: none;">
+                <h2>Register New Account</h2>
+                <div class="form-group">
+                    <label for="reg-username">Username:</label>
+                    <input type="text" id="reg-username" placeholder="Create username">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password:</label>
+                    <input type="password" id="reg-password" placeholder="Create password">
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Confirm Password:</label>
+                    <input type="password" id="reg-confirm" placeholder="Confirm password">
+                </div>
+                <button id="register-btn">Register</button>
+                <p class="login-link">Already have an account? <span id="show-login">Login here</span></p>
+                <p class="error-message" id="register-error"></p>
+            </div>
+
+            <!-- Admin Section (Hidden Initially) -->
+            <div class="admin-section" id="admin-section">
+                <div class="action-buttons">
+                    <button class="dashboard-button" id="dashboard-btn">Dashboard</button>
+                    <button class="add-button" id="add-product-btn">Add New Product</button>
+                    <button class="export-button" id="export-btn">Export Products Data</button>
+                </div>
+                
+                <h3>Product List</h3>
+                <table class="product-table" id="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+                <p class="success-message" id="action-success"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Product</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                
+                <!-- Single column layout as per screenshot -->
+                <div class="form-group">
+                    <label for="form-name">Product Name:</label>
+                    <input type="text" id="form-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-category">Category:</label>
+                    <select id="form-category" required>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Sauces">Sauces</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-price">Price:</label>
+                    <input type="number" id="form-price" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-original-price">Original Price:</label>
+                    <input type="number" id="form-original-price" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-quantity">Quantity:</label>
+                    <input type="number" id="form-quantity" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-discount">Discount (%):</label>
+                    <input type="number" id="form-discount" min="0" max="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-supplier">Supplier:</label>
+                    <input type="text" id="form-supplier" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-origin-country">Origin Country:</label>
+                    <input type="text" id="form-origin-country" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-spice-level">Spice Level:</label>
+                    <select id="form-spice-level" required>
+                        <option value="None">None</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-image-url">Image URL:</label>
+                    <input type="text" id="form-image-url" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-description">Description:</label>
+                    <textarea id="form-description" rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="save-button">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="close-modal" id="close-confirm">&times;</button>
+            </div>
+            <div class="confirmation-message">
+                <p>Are you sure you want to delete this product?</p>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="confirm-buttons">
+                <button class="cancel-btn" id="cancel-delete">Cancel</button>
+                <button class="delete-btn" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script>
+        // Form validation utility functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePhone(phone) {
+            // 简化的电话验证，接受国际格式
+            const re = /^[+]?[(]?[0-9]{1,4}[)]?[\s.-]?[0-9]{1,4}[\s.-]?[0-9]{1,9}$/;
+            return re.test(phone);
+        }
+        
+        function validateProductData(productData) {
+            const errors = [];
+            
+            // 必填字段验证
+            if (!productData.name || productData.name.trim() === '') {
+                errors.push('Product name cannot be empty');
+            }
+            
+            if (!productData.category || productData.category.trim() === '') {
+                errors.push('Category cannot be empty');
+            }
+            
+            // 价格验证
+            if (isNaN(productData.price) || productData.price < 0) {
+                errors.push('Price must be a valid non-negative number');
+            }
+            
+            if (isNaN(productData.original_price) || productData.original_price < 0) {
+                errors.push('Original price must be a valid non-negative number');
+            }
+            
+            // 确保当前价格不高于原价
+            if (productData.price > productData.original_price) {
+                errors.push('Current price cannot be higher than original price');
+            }
+            
+            // 数量验证
+            if (isNaN(productData.quantity) || productData.quantity < 0 || !Number.isInteger(productData.quantity)) {
+                errors.push('Quantity must be a valid non-negative integer');
+            }
+            
+            // 折扣验证
+            if (isNaN(productData.discount) || productData.discount < 0 || productData.discount > 100) {
+                errors.push('Discount must be between 0-100');
+            }
+            
+            // 供应商验证
+            if (!productData.supplier || productData.supplier.trim() === '') {
+                errors.push('Supplier cannot be empty');
+            }
+            
+            // 原产国验证
+            if (!productData.origin_country || productData.origin_country.trim() === '') {
+                errors.push('Origin country cannot be empty');
+            }
+            
+            // 图片URL验证
+            if (!productData.image_url || productData.image_url.trim() === '') {
+                errors.push('Image URL cannot be empty');
+            } else {
+                try {
+                    new URL(productData.image_url);
+                } catch (e) {
+                    errors.push('Please enter a valid image URL');
+                }
+            }
+            
+            // 描述验证
+            if (!productData.description || productData.description.trim() === '') {
+                errors.push('Description cannot be empty');
+            } else if (productData.description.length < 10) {
+                errors.push('Description must be at least 10 characters');
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+        
+        // Hardcoded admin credentials and user system
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'password123';
+        
+        // Get users from localStorage or initialize with admin
+        let users = JSON.parse(localStorage.getItem('adminUsers')) || [
+            { username: ADMIN_USERNAME, password: ADMIN_PASSWORD }
+        ];
+        
+        let currentProductId = null;
+        let products = [];
+        let deleteProductId = null;
+        
+        // DOM Elements for registration
+        const registerSection = document.getElementById('register-section');
+        const showRegisterBtn = document.getElementById('show-register');
+        const showLoginBtn = document.getElementById('show-login');
+        const registerBtn = document.getElementById('register-btn');
+        const registerError = document.getElementById('register-error');
+        
+        // DOM Elements
+        const loginSection = document.getElementById('login-section');
+        const adminSection = document.getElementById('admin-section');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginError = document.getElementById('login-error');
+        const productsTable = document.getElementById('products-table');
+        const addProductBtn = document.getElementById('add-product-btn');
+        const productModal = document.getElementById('product-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const productForm = document.getElementById('product-form');
+        const modalTitle = document.getElementById('modal-title');
+        const confirmModal = document.getElementById('confirm-modal');
+        const closeConfirmBtn = document.getElementById('close-confirm');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+        const actionSuccess = document.getElementById('action-success');
+        
+        // Login functionality
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Validate login fields
+            if (!username.trim()) {
+                loginError.textContent = 'Username cannot be empty';
+                return;
+            }
+            
+            if (!password) {
+                loginError.textContent = 'Password cannot be empty';
+                return;
+            }
+            
+            if (username.length < 3) {
+                loginError.textContent = 'Username must be at least 3 characters long';
+                return;
+            }
+            
+            // Check if user exists in our user database
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                loginSection.style.display = 'none';
+                adminSection.style.display = 'block';
+                logoutBtn.style.display = 'block';
+                loginError.textContent = '';
+                loadProducts();
+            } else {
+                loginError.textContent = 'Invalid username or password';
+            }
+        });
+        
+        // Toggle between login and register sections
+        showRegisterBtn.addEventListener('click', () => {
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'block';
+            loginError.textContent = '';
+            registerError.textContent = '';
+        });
+        
+        showLoginBtn.addEventListener('click', () => {
+            registerSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            loginError.textContent = '';
+            registerError.textContent = '';
+        });
+        
+        // Register functionality
+        registerBtn.addEventListener('click', () => {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm').value;
+            
+            // Validate inputs
+            if (!username.trim()) {
+                registerError.textContent = 'Username cannot be empty';
+                return;
+            }
+            
+            if (!password) {
+                registerError.textContent = 'Password cannot be empty';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                return;
+            }
+            
+            // Username length validation
+            if (username.length < 3) {
+                registerError.textContent = 'Username must be at least 3 characters long';
+                return;
+            }
+            
+            // Password strength validation
+            if (password.length < 6) {
+                registerError.textContent = 'Password must be at least 6 characters long';
+                return;
+            }
+            
+            // Check if username already exists
+            if (users.some(u => u.username === username)) {
+                registerError.textContent = 'Username already exists';
+                return;
+            }
+            
+            // 添加新用户
+            users.push({ username, password });
+            localStorage.setItem('adminUsers', JSON.stringify(users));
+            
+            // 显示成功消息并切换到登录
+            registerError.textContent = 'Registration successful! Please login.';
+            registerError.style.color = '#4CAF50';
+            
+            setTimeout(() => {
+                registerSection.style.display = 'none';
+                loginSection.style.display = 'block';
+                document.getElementById('username').value = username;
+                document.getElementById('reg-username').value = '';
+                document.getElementById('reg-password').value = '';
+                document.getElementById('reg-confirm').value = '';
+                registerError.textContent = '';
+            }, 1500);
+        });
+        
+        // Logout functionality
+        logoutBtn.addEventListener('click', () => {
+            loginSection.style.display = 'block';
+            adminSection.style.display = 'none';
+            logoutBtn.style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            loginError.textContent = '';
+        });
+        
+        // Load products from JSON
+        async function loadProducts() {
+            try {
+                const response = await fetch('data/products.json');
+                products = await response.json();
+                displayProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+        
+        // Display products in table
+        function displayProducts() {
+            const tbody = productsTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>${product.quantity}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => editProduct(parseInt(e.target.dataset.id)));
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => showDeleteConfirmation(parseInt(e.target.dataset.id)));
+            });
+        }
+        
+        // Show add product modal
+        const dashboardBtn = document.getElementById('dashboard-btn');
+        dashboardBtn.addEventListener('click', () => {
+            window.location.href = 'dashboard.html';
+        });
+
+        addProductBtn.addEventListener('click', () => {
+            currentProductId = null;
+            modalTitle.textContent = 'Add New Product';
+            productForm.reset();
+            productModal.style.display = 'flex';
+            document.getElementById('product-id').value = '';
+        });
+        
+        // Edit product
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                currentProductId = id;
+                modalTitle.textContent = 'Edit Product';
+                
+                // Fill form with product data
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('form-name').value = product.name;
+                document.getElementById('form-category').value = product.category;
+                document.getElementById('form-price').value = product.price;
+                document.getElementById('form-original-price').value = product.original_price;
+                document.getElementById('form-quantity').value = product.quantity;
+                document.getElementById('form-discount').value = product.discount;
+                document.getElementById('form-supplier').value = product.supplier;
+                document.getElementById('form-origin-country').value = product.origin_country;
+                document.getElementById('form-spice-level').value = product.spice_level;
+                document.getElementById('form-image-url').value = product.image_url;
+                document.getElementById('form-description').value = product.description;
+                
+                productModal.style.display = 'flex';
+            }
+        }
+        
+        // Add real-time validation feedback for product form
+        const addFieldValidation = (fieldId, validationFn, errorMessage) => {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+            
+            field.addEventListener('blur', () => {
+                if (field.value && !validationFn(field.value)) {
+                    field.classList.add('error');
+                    // 移除现有的错误提示
+                    const existingError = field.parentElement.querySelector('.field-error');
+                    if (!existingError) {
+                        const errorSpan = document.createElement('span');
+                        errorSpan.className = 'field-error';
+                        errorSpan.textContent = errorMessage;
+                        errorSpan.style.color = '#e74c3c';
+                        errorSpan.style.fontSize = '0.85rem';
+                        errorSpan.style.marginTop = '5px';
+                        errorSpan.style.display = 'block';
+                        field.parentElement.appendChild(errorSpan);
+                    }
+                } else {
+                    field.classList.remove('error');
+                    const errorSpan = field.parentElement.querySelector('.field-error');
+                    if (errorSpan) {
+                        errorSpan.remove();
+                    }
+                }
+            });
+            
+            field.addEventListener('input', () => {
+                field.classList.remove('error');
+                const errorSpan = field.parentElement.querySelector('.field-error');
+                if (errorSpan) {
+                    errorSpan.remove();
+                }
+            });
+        };
+        
+        // Add form field validation
+        addFieldValidation('form-price', value => !isNaN(value) && parseFloat(value) >= 0, '价格必须为有效的非负数');
+        addFieldValidation('form-original-price', value => !isNaN(value) && parseFloat(value) >= 0, '原价必须为有效的非负数');
+        addFieldValidation('form-quantity', value => !isNaN(value) && parseInt(value) >= 0 && Number.isInteger(parseInt(value)), '数量必须为有效的非负整数');
+        addFieldValidation('form-discount', value => !isNaN(value) && parseInt(value) >= 0 && parseInt(value) <= 100, '折扣必须在0-100之间');
+        addFieldValidation('form-image-url', value => {
+            try {
+                new URL(value);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }, '请输入有效的图片URL');
+        
+        // 添加CSS样式用于错误字段
+        const style = document.createElement('style');
+        style.textContent = `
+            input.error, textarea.error, select.error {
+                border-color: #e74c3c !important;
+                box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1) !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Save product (add or update)
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productData = {
+                name: document.getElementById('form-name').value,
+                category: document.getElementById('form-category').value,
+                price: parseFloat(document.getElementById('form-price').value),
+                original_price: parseFloat(document.getElementById('form-original-price').value),
+                quantity: parseInt(document.getElementById('form-quantity').value),
+                discount: parseInt(document.getElementById('form-discount').value),
+                supplier: document.getElementById('form-supplier').value,
+                origin_country: document.getElementById('form-origin-country').value,
+                spice_level: document.getElementById('form-spice-level').value,
+                image_url: document.getElementById('form-image-url').value,
+                description: document.getElementById('form-description').value
+            };
+            
+            // Validate product data
+            const validation = validateProductData(productData);
+            if (!validation.isValid) {
+                // Create error message element
+                let errorContainer = document.getElementById('form-validation-error');
+                if (!errorContainer) {
+                    errorContainer = document.createElement('div');
+                    errorContainer.id = 'form-validation-error';
+                    errorContainer.style.backgroundColor = '#ffebee';
+                    errorContainer.style.color = '#c62828';
+                    errorContainer.style.padding = '15px';
+                    errorContainer.style.borderRadius = '5px';
+                    errorContainer.style.marginBottom = '20px';
+                    errorContainer.style.borderLeft = '4px solid #c62828';
+                    productForm.insertBefore(errorContainer, productForm.firstChild);
+                }
+                
+                // 更新错误信息
+                errorContainer.innerHTML = `
+                    <strong>Form validation errors:</strong>
+                    <ul style="margin-top: 8px; padding-left: 20px;">
+                        ${validation.errors.map(error => `<li>${error}</li>`).join('')}
+                    </ul>
+                `;
+                
+                // Scroll to error message
+                errorContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            } else {
+                // Clear error message
+                const errorContainer = document.getElementById('form-validation-error');
+                if (errorContainer) {
+                    errorContainer.remove();
+                }
+            }
+            
+            if (currentProductId) {
+                // Update existing product
+                productData.id = currentProductId;
+                const index = products.findIndex(p => p.id === currentProductId);
+                if (index !== -1) {
+                    products[index] = productData;
+                }
+            } else {
+                // Add new product
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                productData.id = newId;
+                products.push(productData);
+            }
+            
+            // Save changes locally and prepare for export
+            try {
+                displayProducts();
+                productModal.style.display = 'none';
+                
+                // Show success notification
+                showNotification(currentProductId ? 'Product updated successfully!' : 'Product added successfully!', 'success');
+                
+                // Show export reminder with more detailed instructions
+                actionSuccess.innerHTML = 'Changes saved locally. <strong>Click Export Products Data to download the updated JSON file</strong> and replace the file in your data folder.';
+                setTimeout(() => {
+                    actionSuccess.textContent = '';
+                }, 8000);
+                
+                // Store products in localStorage as backup
+                localStorage.setItem('backupProducts', JSON.stringify(products));
+            } catch (error) {
+                console.error('Error saving product:', error);
+                showNotification('Error saving product. Please try again.', 'error');
+            }
+        });
+        
+        // Show delete confirmation
+        function showDeleteConfirmation(id) {
+            deleteProductId = id;
+            confirmModal.style.display = 'flex';
+        }
+        
+        // Confirm delete
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deleteProductId) {
+                products = products.filter(p => p.id !== deleteProductId);
+                displayProducts();
+                confirmModal.style.display = 'none';
+                
+                // Show success notification
+                showNotification('Product deleted successfully!', 'success');
+                
+                // Show export reminder with more detailed instructions
+                actionSuccess.innerHTML = 'Changes saved locally. <strong>Click Export Products Data to download the updated JSON file</strong> and replace the file in your data folder.';
+                setTimeout(() => {
+                    actionSuccess.textContent = '';
+                }, 8000);
+                
+                // Store products in localStorage as backup
+                localStorage.setItem('backupProducts', JSON.stringify(products));
+            }
+        });
+        
+        // Close modals
+        closeModalBtn.addEventListener('click', () => {
+            productModal.style.display = 'none';
+        });
+        
+        closeConfirmBtn.addEventListener('click', () => {
+            confirmModal.style.display = 'none';
+        });
+        
+        cancelDeleteBtn.addEventListener('click', () => {
+            confirmModal.style.display = 'none';
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === productModal) {
+                productModal.style.display = 'none';
+            }
+            if (e.target === confirmModal) {
+                confirmModal.style.display = 'none';
+            }
+        });
+        
+        // Export products data button with improved functionality
+        document.getElementById('export-btn').addEventListener('click', () => {
+            if (exportToJsonFile(products, 'products.json')) {
+                showNotification('Product data exported successfully!', 'success');
+                // Clear the export reminder after successful export
+                actionSuccess.textContent = '';
+                
+                // Show additional instructions
+                setTimeout(() => {
+                    showNotification('Please replace data/products.json with the downloaded file to update your product catalog.', 'info');
+                }, 2000);
+            } else {
+                showNotification('Error exporting product data. Please try again.', 'error');
+            }
+        });
+        
+        // Load products from backup if available (useful if page refreshes)
+        window.addEventListener('DOMContentLoaded', () => {
+            const backupProducts = localStorage.getItem('backupProducts');
+            if (backupProducts) {
+                showNotification('Found unsaved changes. You can restore them after logging in.', 'info');
+            }
+        });
+        
+        // Add a button to restore from backup
+        adminSection.addEventListener('click', (e) => {
+            // This will be implemented if needed
+        });
+        
+        // Calculate discount automatically when prices change
+        document.getElementById('form-original-price').addEventListener('change', updateDiscount);
+        document.getElementById('form-price').addEventListener('change', updateDiscount);
+        
+        function updateDiscount() {
+            const originalPrice = parseFloat(document.getElementById('form-original-price').value);
+            const currentPrice = parseFloat(document.getElementById('form-price').value);
+            if (!isNaN(originalPrice) && !isNaN(currentPrice) && originalPrice > 0) {
+                const discount = calculateDiscount(originalPrice, currentPrice);
+                document.getElementById('form-discount').value = discount;
+            }
+        }
+    </script>
+<script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            
+            // Check theme preference in local storage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Theme toggle button click event
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    
+                    // Save theme preference to local storage
+                    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', currentTheme);
+                });
+            }
+        });
+    </script>
+        <footer>
+            <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+        </footer>
+    </body>
+</html>

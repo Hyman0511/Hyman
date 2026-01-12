@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - WuShi Snacks</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .product-image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .main-image:hover {
+            transform: scale(1.02);
+        }
+
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-category {
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .product-name {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .original-price {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .product-description {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .product-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background-color: var(--background-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spec-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .spec-value {
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stock-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #28a745;
+        }
+
+        .stock-indicator.low {
+            background-color: #ffc107;
+        }
+
+        .stock-indicator.out {
+            background-color: #dc3545;
+        }
+
+        .stock-text {
+            color: var(--text-light);
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .add-to-cart-btn {
+            flex: 1;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        .add-to-cart-btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            background-color: white;
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--background-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .product-features {
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .feature-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+            }
+
+            .main-image {
+                height: 300px;
+            }
+
+            .product-name {
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 1.5rem;
+            }
+
+            .product-specs {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/lunch-restaurant-logo.png" alt="Lunch Restaurant Logo" class="logo-image">
+                    <h1 class="logo-text">WuShi Snacks</h1>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="login.html">Login</a>
+                <a href="https://hyman.rf.gd/">Register</a>
+                <a href="admin.html">Admin</a>
+                <a href="cart.html">Cart</a>
+                <a href="forum.html">Forum</a>
+                <a href="contact.html">Contact Us</a>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="product-detail-container">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> &gt; 
+                <a href="products.html">Products</a> &gt; 
+                <span id="breadcrumb-product">Product Detail</span>
+            </div>
+
+            <div id="product-detail-content" class="loading">
+                Loading product details...
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 WuShi Snacks. All rights reserved.</p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initProductDetail();
+            initThemeToggle();
+        });
+
+        // 保存当前产品到全局变量
+        let currentProduct = null;
+        
+        async function initProductDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                showError('Product ID not found');
+                return;
+            }
+
+            try {
+                const response = await fetch('data/products.json');
+                const products = await response.json();
+                const product = products.find(p => p.id === parseInt(productId));
+
+                if (!product) {
+                    showError('Product not found');
+                    return;
+                }
+                
+                // 保存到全局变量
+                currentProduct = product;
+
+                displayProductDetail(product);
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showError('Failed to load product details');
+            }
+        }
+
+        function displayProductDetail(product) {
+            const container = document.getElementById('product-detail-content');
+            const breadcrumbProduct = document.getElementById('breadcrumb-product');
+            
+            breadcrumbProduct.textContent = product.name;
+
+            const stockClass = product.quantity > 50 ? '' : product.quantity > 0 ? 'low' : 'out';
+            const stockText = product.quantity > 50 ? 'In Stock' : product.quantity > 0 ? 'Low Stock' : 'Out of Stock';
+            const canAddToCart = product.quantity > 0;
+
+            container.className = 'product-detail';
+            container.innerHTML = `
+                <div class="product-image-section">
+                    <img src="${product.image_url}" alt="${product.name}" class="main-image" onclick="openImagePreview('${product.image_url}')">
+                </div>
+                <div class="product-info-section">
+                    <div class="product-category">${product.category}</div>
+                    <h1 class="product-name">${product.name}</h1>
+                    <div class="product-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span>(4.5) 128 reviews</span>
+                    </div>
+                    <div class="product-price">
+                        $${product.price.toFixed(2)}
+                        ${product.discount > 0 ? `<span class="original-price">$${product.original_price.toFixed(2)}</span>` : ''}
+                        ${product.discount > 0 ? `<span class="discount-badge">${product.discount}% OFF</span>` : ''}
+                    </div>
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="product-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Origin:</span>
+                            <span class="spec-value">${product.origin_country}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Spice Level:</span>
+                            <span class="spec-value">${product.spice_level}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Supplier:</span>
+                            <span class="spec-value">${product.supplier}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Category:</span>
+                            <span class="spec-value">${product.category}</span>
+                        </div>
+                    </div>
+
+                    <div class="stock-status">
+                        <div class="stock-indicator ${stockClass}"></div>
+                        <span class="stock-text">${stockText} (${product.quantity} available)</span>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <span class="spec-label">Quantity:</span>
+                        <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="quantity-input" class="quantity-input" value="1" min="1" max="${product.quantity}">
+                        <button class="quantity-btn" onclick="increaseQuantity(${product.quantity})">+</button>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="add-to-cart-btn" id="add-to-cart-btn" onclick="addToCart()" ${!canAddToCart ? 'disabled' : ''}>
+                            ${canAddToCart ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
+                        <button class="back-btn" onclick="goBack()">Back to Products</button>
+                    </div>
+
+                    <div class="product-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Premium quality ingredients</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Authentic taste from ${product.origin_country}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Fast and secure delivery</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>30-day money-back guarantee</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            updateAddToCartButton();
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        function increaseQuantity(maxQuantity) {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) < maxQuantity) {
+                input.value = parseInt(input.value) + 1;
+            }
+        }
+
+        function addToCart() {
+            if (!currentProduct) {
+                console.error('Product data not loaded');
+                if (typeof showNotification === 'function') {
+                    showNotification('Product data not loaded', 'error');
+                } else {
+                    alert('Product data not loaded');
+                }
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('quantity-input').value);
+            const userId = 'guest';
+            
+            if (window.cart && typeof window.cart.addToCart === 'function') {
+                // 使用cart.js模块添加到购物车，需要异步处理
+                window.cart.addToCart(currentProduct, quantity, userId)
+                    .then(result => {
+                        if (!result.success) {
+                            console.error('Failed to add to cart:', result.message);
+                            // 检查是否有showNotification函数
+                            if (typeof showNotification === 'function') {
+                                showNotification(result.message || 'Failed to add item to cart', 'error');
+                            } else {
+                                alert(result.message || 'Failed to add item to cart');
+                            }
+                        } else {
+                            console.log('Successfully added to cart:', result);
+                            // 检查是否有showNotification函数
+                            if (typeof showNotification === 'function') {
+                                showNotification('Product added to cart successfully!', 'success');
+                            } else {
+                                alert('Product added to cart successfully!');
+                            }
+                            
+                            // 更新购物车数量显示
+                            if (typeof updateCartCount === 'function') {
+                                updateCartCount();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding to cart:', error);
+                        if (typeof showNotification === 'function') {
+                            showNotification('Failed to add item to cart', 'error');
+                        } else {
+                            alert('Failed to add item to cart');
+                        }
+                    });
+            } else {
+                console.error('Cart.js module not available');
+                if (typeof showNotification === 'function') {
+                    showNotification('Shopping cart functionality not available', 'error');
+                } else {
+                    alert('Shopping cart functionality not available');
+                }
+            }
+        }
+
+        function updateAddToCartButton() {
+            const button = document.getElementById('add-to-cart-btn');
+            if (button && window.auth && window.auth.isLoggedIn && window.auth.isLoggedIn()) {
+                button.disabled = false;
+            } else if (button) {
+                button.disabled = false;
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'products.html';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('product-detail-content');
+            container.className = 'error';
+            container.innerHTML = `
+                <h2>Error</h2>
+                <p>${message}</p>
+                <button class="back-btn" onclick="goBack()">Back to Products</button>
+            `;
+        }
+
+        function openImagePreview(imageUrl) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+            `;
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                color: white;
+                font-size: 40px;
+                font-weight: bold;
+                cursor: pointer;
+            `;
+            
+            modal.appendChild(img);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            
+            modal.addEventListener('click', () => {
+                document.body.removeChild(modal);
+                document.body.style.overflow = 'auto';
+            });
+            
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.body.removeChild(modal);
+                document.body.style.overflow = 'auto';
+            });
+        }
+
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const moonIcon = document.querySelector('.moon-icon');
+            const sunIcon = document.querySelector('.sun-icon');
+            
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            } else if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.classList.add('dark-mode');
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                }
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = document.body.classList.toggle('dark-mode');
+                
+                if (isDarkMode) {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
